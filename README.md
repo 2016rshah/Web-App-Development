@@ -1,3 +1,3 @@
 #Web App Development
 
-Coursework for semester long elective class at TJHSST. Class taught in PHP, JavaScript, SQL, CSS, HTML, the DOM. 
+Coursework for semester long elective class at TJHSST. Topics include PHP, JavaScript, SQL, CSS, HTML, and the DOM. 
