@@ -1,10 +1,11 @@
 <html>
   <head>
     <title>States Game</title>
-
     <style>
 		body {
 		    text-align:center;
+            background-image: url("http://www.brandnewz.com/wordpress/wp-content/uploads/2014/03/American-Flag.jpg");
+            background-color: #cccccc;
 		}
 		li, ul{
 			 list-style-type: none;
@@ -13,69 +14,86 @@
 		input{
 			text-align:center;
 		}
+        .container{
+            background-color:white;
+            max-width:50%;
+            min-height:100%;
+            margin-right:auto;
+            margin-left:auto;
+        }
+        .red{
+            color:red;
+        }
 	</style>
   </head>
-
   <body>
-  	<h1>Welcome to the State Game!</h1>
-
-  	<h3>Type in all the states you know here:</h3>
-    <input type="text" id="state_text_field" placeholder="not case sensitive" />
-
-    <h3>Your progress:</h3>
-    <progress id="progress_bar" max="50" value="0"></progress>
-
-    <h3>Here are the states you've found so far</h3>
-    <ul id="found_states">
-    </ul>
-
-    <script>
-		var needed_states = ["alabama", "alaska", "arizona", "arkansas", "california", "colorado", "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho", "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", "maine", "maryland", "massachusetts", "michigan", "minnesota", "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire", "new jersey", "new mexico", "new york", "north carolina", "north dakota", "ohio", "oklahoma", "oregon", "pennsylvania", "rhode island", "south carolina", "south dakota", "tennessee", "texas", "utah", "vermont", "virgin islands", "virginia", "washington", "west virginia", "wisconsin", "wyoming"]
-		// var needed_states = ["a", "b", "c"]
-		var found_states = []
-
-    	var inp = document.getElementById("state_text_field")
-    	var f = document.getElementById("found_states")
-    	var p = document.getElementById("progress_bar")
-
-        var timeoutID;
-
-    	inp.addEventListener('input', function(){
-
-            //start up
-            if(!timeoutID)
-                timeoutID = window.setTimeout(function(){alert("You lost!")}, 300000);
-
-            //actual text
-    		var entered_text = inp.value.toLowerCase();
-    		if(entered_text)
-    		if(needed_states.indexOf(entered_text) > -1){
-    			var i = needed_states.indexOf(entered_text)
-    			var state = needed_states[i]
-    			found_states.push(state) //add state to list of found states
-    			addState(state)
-    			needed_states.splice(i, 1); //remove from needed states
-
-    			if(needed_states.length == 0){
-    				window.clearTimeout(timeoutID)
-    				alert("you win!")
-    			}
-    		}
-    	}, false)
-
-    	function addState(state){
-    		p.value = found_states.length
-
-    		var node = document.createElement("LI");
-    		var textnode = document.createTextNode(state);
-			node.appendChild(textnode); 
-    		f.appendChild(node)
-    		inp.value="";
-    	}
-
-    	// var timeoutID = window.setTimeout(function(){alert("You lost!")}, 5000);
-        inp.focus();
-		
-    </script>
+    <div class="container">
+      	<h1>Welcome to the State Game!</h1>
+      	<h3>Type in all the states you know here:</h3>
+        <input type="text" id="state_text_field" />
+        <h3>Your progress:</h3>
+        <h1 id='time'>5:00</h1>
+        <progress id="progress_bar" max="50" value="0"></progress>
+        <h3>Here are the states you've found so far</h3>
+        <ul id="found_states"></ul>
+        <script>
+    		var needed_states = ["alabama", "alaska", "arizona", "arkansas", "california", "colorado", "connecticut", "delaware", "florida", "georgia", "hawaii", "idaho", "illinois", "indiana", "iowa", "kansas", "kentucky", "louisiana", "maine", "maryland", "massachusetts", "michigan", "minnesota", "mississippi", "missouri", "montana", "nebraska", "nevada", "new hampshire", "new jersey", "new mexico", "new york", "north carolina", "north dakota", "ohio", "oklahoma", "oregon", "pennsylvania", "rhode island", "south carolina", "south dakota", "tennessee", "texas", "utah", "vermont", "virgin islands", "virginia", "washington", "west virginia", "wisconsin", "wyoming"]
+    		// var needed_states = ["abc", "xyz", "cat"]
+    		var found_states = []
+        	var inp = document.getElementById("state_text_field")
+        	var f = document.getElementById("found_states")
+        	var p = document.getElementById("progress_bar")
+            var timeoutID;
+            var started = false
+        	inp.addEventListener('input', function(){
+                if(!started){
+                    started = true
+                    var minutes = 1;
+                    secondsRemaining = minutes * 60;
+                    timeoutID = setInterval(tick, 1000);
+                }
+        		var entered_text = inp.value.toLowerCase();
+        		if(needed_states.indexOf(entered_text) > -1){
+        			var i = needed_states.indexOf(entered_text)
+        			var state = needed_states[i]
+        			found_states.push(state) //add state to list of found states
+        			addState(state)
+        			needed_states.splice(i, 1); //remove from needed states
+        			if(needed_states.length == 0){
+        				window.clearInterval(timeoutID)
+        				alert("you win!")
+        			}
+        		}
+        	}, false)
+        	function addState(state, optionalRed){
+        		p.value = found_states.length
+        		var node = document.createElement("LI");
+    			node.appendChild(document.createTextNode(state)); 
+                if(optionalRed)
+                    node.className="red"
+        		f.appendChild(node)
+        		inp.value="";
+        	}
+            function lost(){
+                window.clearInterval(timeoutID)
+                for(var i = 0; i<needed_states.length; i++)
+                    addState(needed_states[i], true)
+                alert("You lost! The states you didn't get are shown in red.");
+            }
+            function tick(){
+                var timeDisplay = document.getElementById("time");
+                var min = Math.floor(secondsRemaining / 60);
+                var sec = secondsRemaining - (min * 60);
+                if (sec < 10)
+                    sec = "0" + sec;
+                var message = min.toString() + ":" + sec;
+                timeDisplay.innerHTML = message;
+                if (secondsRemaining === 0)
+                    lost()
+                secondsRemaining--;
+            }
+            inp.focus();
+        </script>
+    </div>
   </body>
 </html>
