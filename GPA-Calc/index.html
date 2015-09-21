@@ -1,0 +1,67 @@
+<html>
+	<head>
+		<title>GPA Calculator</title>
+		<style>
+			body {
+			    background-color:#CCFF66;
+			}
+		</style>
+	</head>
+	<body>
+		<table border="2">
+	      <tr>
+	      	<td>
+	      		<strong>GPA:</strong>
+	      	</td>
+	      	<td>
+	      		<div id="currGPA">4</div>
+	      	</td>
+	      </tr>
+	      <tr>
+	      	<td>
+	      		<strong>Quarter 1:</strong>
+	      	</td>
+	      	<td>
+	      		<select id="q1">
+	      			<option value="A">A</option>
+	      			<option value="B">B</option>
+	      			<option value="C">C</option>
+	      			<option value="D">D</option>
+	      			<option value="F">F</option>
+	      		</select>
+	      	</td>
+	      </tr>
+	      <tr>
+	      	<td>
+	      		<strong>Quarter 2:</strong>
+	      	</td>
+	      	<td>
+	      		<select id="q2">
+	      			<option value="A">A</option>
+	      			<option value="B">B</option>
+	      			<option value="C">C</option>
+	      			<option value="D">D</option>
+	      			<option value="F">F</option>
+	      		</select>
+	      	</td>
+	      </tr>
+	    </table>
+		<script>
+			var currGPA = document.getElementById("currGPA")
+			var q1 = document.getElementById("q1")
+			var q2 = document.getElementById("q2")
+
+			q1.addEventListener("change", gradeChanged)
+			q2.addEventListener("change", gradeChanged)
+
+			function gradeChanged(){
+				var gradeValues = [4,3,2,1,0]
+				var g1 = gradeValues[q1.selectedIndex]
+				var g2 = gradeValues[q2.selectedIndex]
+				var grade = (g1 + g2) / 2;
+				currGPA.innerHTML = grade;
+			}
+
+		</script>
+	</body>
+</html
