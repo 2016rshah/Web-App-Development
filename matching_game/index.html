@@ -11,18 +11,22 @@
 		<div class="row">
 			<div class="twelve columns">
 				<h1 class="ta-center">Matching game</h1>
-				<p class="ta-center"><em>Instructions: click on a state, and tell the prompt either the state name or abbreviation.</em></p>
+				<p class="ta-center"><em>Instructions: tell the prompt either the state name or the abbreviation.</em></p>
 			</div>
 		</div>
 		<div class="row">
 			<div class="six columns">
 				<div id="map" style="height: 75%;"></div>
 			</div>
-			<div class="six columns">
-				<h3 id="status" class="ta-center">These are the states you've found</h3>
-				<p id="found"></p>
+			<div class="six columns" id="addHere">
+				<div class="row">
+					<h3 id="status" class="ta-center">These are the states you've found</h3>
+					<p id="found"></p>
+					<div class="row ta-center"><input type="text" id = "promptInput" placeholder="Name of blue state?"></div>
+				</div>
 			</div>
 		</div>
-		<script src="index.js"></script>
+		<!--<script src="index.js"></script> -->
+		<script src="lazy.js"></script>
 	</body>
 </html>
