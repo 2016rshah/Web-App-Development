@@ -1,3 +1,7 @@
 .ta-center {
 	text-align:center;
 }
+
+#found{
+	text-transform:capitalize;
+}

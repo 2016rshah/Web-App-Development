@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
 	var teal = "#16a085"
 	var lightBlue = "#206592"
 	var darkBlue = "#3a5c7e"
@@ -70,5 +69,8 @@ $(document).ready(function() {
 		
 		redOrBlue == 0 ? redOrBlue = 1 : redOrBlue = 0 //ternary operator!
 	}
+
+
+	$("#promptInput").focus()
 });
 
