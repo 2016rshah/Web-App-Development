@@ -1,6 +1,8 @@
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
+
+//http://stackoverflow.com/a/5932203/3861396
 function relMouseCoords(event){
     var totalOffsetX = 0;
     var totalOffsetY = 0;
