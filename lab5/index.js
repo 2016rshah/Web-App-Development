@@ -1,7 +1,6 @@
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
-
 //http://stackoverflow.com/a/5932203/3861396
 function relMouseCoords(event){
     var totalOffsetX = 0;
@@ -27,19 +26,6 @@ c.onclick = function(e) {
 
 	//clear the canvas
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
-	coords = canvas.relMouseCoords(e);
-	canvasX = coords.x;
-	canvasY = coords.y;
-	console.log(canvasX, canvasY)
-
-
-	ctx.strokeStyle = "#FF0000";
-	ctx.beginPath();
-	ctx.arc(e.pageX,e.pageY,40,0,2*Math.PI);
-	ctx.stroke();
-
 
 	ctx.strokeStyle = "#00FF00";
 	ctx.beginPath();
