@@ -3,26 +3,6 @@ var ctx = c.getContext("2d");
 
 var dots = []
 
-//http://stackoverflow.com/a/5932203/3861396
-function relMouseCoords(event){
-    var totalOffsetX = 0;
-    var totalOffsetY = 0;
-    var coords = {x:0, y:0}
-    var currentElement = this;
-
-    do{
-        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
-        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-    }
-    while(currentElement = currentElement.offsetParent)
-
-    coords.x = event.pageX - totalOffsetX;
-    coords.y = event.pageY - totalOffsetY;
-
-    return {x:coords.x, y:coords.y}
-}
-HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
-
 document.getElementById("clear").onclick = clearC
 
 function clearC(){
@@ -39,11 +19,9 @@ function drawDots(arr){
 }
 
 function drawTwoPointRect(l1, l2){
-    var ix = l1.x
-    var iy = l1.y
     var dx = l2.x - l1.x
     var dy = l2.y - l1.y
-    ctx.rect(ix, iy, dx, dy);
+    ctx.rect(l1.x, l1.y, dx, dy);
     ctx.stroke();
 }
 
@@ -80,7 +58,6 @@ var drawing = false;
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
-
     drawing = true;
 }
 c.onmousemove = function(e){
@@ -89,40 +66,43 @@ c.onmousemove = function(e){
 
         var coords = canvas.relMouseCoords(e);
         currLoc = {x:coords.x, y:coords.y}
+
         drawTwoPointRect(startLoc, currLoc)
-        
+
         drawDots(dots)
     }
 }
 c.onmouseup = function(e){
-
-    drawing = false;
-
     var coords = canvas.relMouseCoords(e);
-
     finalLoc = {x:coords.x, y:coords.y}
 
-    if(finalLoc.x == startLoc.x && finalLoc.y == startLoc.y){
+    if(finalLoc.x == startLoc.x && finalLoc.y == startLoc.y){ //just clicked
         clearC()
-        dots.push({x:coords.x, y:coords.y, r:20, c:"blue"})
+
+        if(!e.ctrlKey){
+            resetDots() //if he wants to reset all dots when you click, uncomment this.
+        }
+
+        dots.push({x:coords.x, y:coords.y, r:20, c:"red"}) 
+
         drawDots(dots)
     }
-    else{
-
+    else{ //dragged over
         clearC()
 
-        console.log(e.ctrlKey, event.button == 2 )
+        //control key part of lab
+        console.log(e.metaKey, e.ctrlKey)
         if(!e.ctrlKey){
             resetDots()
         }
 
-
         convertDots(startLoc, finalLoc)
-
         drawDots(dots)
     }
+
+    //reset everything
+    drawing = false;
     startLoc = {}
     currLoc = {}
     finalLoc = {}
 }
-
