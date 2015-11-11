@@ -55,10 +55,17 @@ var finalLoc = {}
 
 var drawing = false;
 
+var ctrlPressed = false;
+
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
     drawing = true;
+
+    if(e.metaKey || e.ctrlKey){
+        ctrlPressed = true;
+    }
+
 }
 c.onmousemove = function(e){
     if(drawing){
@@ -79,7 +86,7 @@ c.onmouseup = function(e){
     if(finalLoc.x == startLoc.x && finalLoc.y == startLoc.y){ //just clicked
         clearC()
 
-        if(!e.ctrlKey){
+        if(!ctrlPressed){
             resetDots() //if he wants to reset all dots when you click, uncomment this.
         }
 
@@ -92,7 +99,7 @@ c.onmouseup = function(e){
 
         //control key part of lab
         console.log(e.metaKey, e.ctrlKey)
-        if(!e.ctrlKey){
+        if(!ctrlPressed){
             resetDots()
         }
 
@@ -101,6 +108,7 @@ c.onmouseup = function(e){
     }
 
     //reset everything
+    ctrlPressed = false;
     drawing = false;
     startLoc = {}
     currLoc = {}
