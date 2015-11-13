@@ -3,7 +3,12 @@ var ctx = c.getContext("2d");
 
 var dots = []
 
-document.getElementById("clear").onclick = clearC
+document.getElementById("clear").onclick = deleteEverything
+
+function deleteEverything(){
+    dots = []
+    clearC()
+}
 
 function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -57,6 +62,8 @@ var drawing = false;
 
 var ctrlPressed = false;
 
+var maxDist = 0
+
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
@@ -77,17 +84,21 @@ c.onmousemove = function(e){
         drawTwoPointRect(startLoc, currLoc)
 
         drawDots(dots)
+
+        var dist = Math.pow(startLoc.x - currLoc.x, 2) + Math.pow(startLoc.y - currLoc.y, 2)
+        maxDist = (dist>maxDist) ? dist : maxDist
+        console.log(maxDist)
     }
 }
 c.onmouseup = function(e){
     var coords = canvas.relMouseCoords(e);
     finalLoc = {x:coords.x, y:coords.y}
 
-    if(finalLoc.x == startLoc.x && finalLoc.y == startLoc.y){ //just clicked
+    if(maxDist < 75){ //just clicked
         clearC()
 
         if(!ctrlPressed){
-            resetDots() //if he wants to reset all dots when you click, uncomment this.
+            resetDots()
         }
 
         dots.push({x:coords.x, y:coords.y, r:20, c:"red"}) 
@@ -113,4 +124,5 @@ c.onmouseup = function(e){
     startLoc = {}
     currLoc = {}
     finalLoc = {}
+    maxDist = 0
 }
