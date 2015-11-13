@@ -57,34 +57,24 @@ function resetDots(){
 var startLoc = {}
 var currLoc = {}
 var finalLoc = {}
-
 var drawing = false;
-
 var ctrlPressed = false;
-
 var maxDist = 0
-
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
     drawing = true;
-
     if(e.metaKey || e.ctrlKey){
         ctrlPressed = true;
     }
-
 }
 c.onmousemove = function(e){
     if(drawing){
         clearC()
-
         var coords = canvas.relMouseCoords(e);
         currLoc = {x:coords.x, y:coords.y}
-
         drawTwoPointRect(startLoc, currLoc)
-
         drawDots(dots)
-
         var dist = Math.pow(startLoc.x - currLoc.x, 2) + Math.pow(startLoc.y - currLoc.y, 2)
         maxDist = (dist>maxDist) ? dist : maxDist
         console.log(maxDist)
@@ -93,36 +83,18 @@ c.onmousemove = function(e){
 c.onmouseup = function(e){
     var coords = canvas.relMouseCoords(e);
     finalLoc = {x:coords.x, y:coords.y}
-
+    celarC()
+    if(!ctrlPressed)
+        resetDots()
     if(maxDist < 75){ //just clicked
-        clearC()
-
-        if(!ctrlPressed){
-            resetDots()
-        }
-
-        dots.push({x:coords.x, y:coords.y, r:20, c:"red"}) 
-
-        drawDots(dots)
+        dots.push({x:coords.x, y:coords.y, r:20, c:"red"})
     }
     else{ //dragged over
-        clearC()
-
-        //control key part of lab
-        console.log(e.metaKey, e.ctrlKey)
-        if(!ctrlPressed){
-            resetDots()
-        }
-
         convertDots(startLoc, finalLoc)
-        drawDots(dots)
-    }
-
+    } 
+    drawDots(dots)
     //reset everything
-    ctrlPressed = false;
-    drawing = false;
-    startLoc = {}
-    currLoc = {}
-    finalLoc = {}
+    ctrlPressed = drawing = false;
+    startLoc = currLoc = finalLoc = {}
     maxDist = 0
 }
