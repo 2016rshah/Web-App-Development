@@ -2,13 +2,9 @@ var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
 var dots = []
+dots.push({x:-50, y:-50, r:20, c:"red"}) //fix mystery bug when dragging without drawing dot
 
-document.getElementById("clear").onclick = deleteEverything
-
-function deleteEverything(){
-    dots = []
-    clearC()
-}
+document.getElementById("clear").onclick = clearC
 
 function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -57,44 +53,71 @@ function resetDots(){
 var startLoc = {}
 var currLoc = {}
 var finalLoc = {}
+
 var drawing = false;
+
 var ctrlPressed = false;
+
 var maxDist = 0
+
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
     drawing = true;
+
     if(e.metaKey || e.ctrlKey){
         ctrlPressed = true;
     }
+
 }
 c.onmousemove = function(e){
     if(drawing){
         clearC()
+
         var coords = canvas.relMouseCoords(e);
         currLoc = {x:coords.x, y:coords.y}
+
         drawTwoPointRect(startLoc, currLoc)
+
         drawDots(dots)
+
         var dist = Math.pow(startLoc.x - currLoc.x, 2) + Math.pow(startLoc.y - currLoc.y, 2)
         maxDist = (dist>maxDist) ? dist : maxDist
-        console.log(maxDist)
     }
 }
 c.onmouseup = function(e){
     var coords = canvas.relMouseCoords(e);
     finalLoc = {x:coords.x, y:coords.y}
-    celarC()
-    if(!ctrlPressed)
-        resetDots()
+
     if(maxDist < 75){ //just clicked
-        dots.push({x:coords.x, y:coords.y, r:20, c:"red"})
+        clearC()
+
+        if(!ctrlPressed){
+            resetDots()
+        }
+
+        dots.push({x:coords.x, y:coords.y, r:20, c:"red"}) 
+
+        drawDots(dots)
     }
     else{ //dragged over
+        clearC()
+
+        //control key part of lab
+        console.log(e.metaKey, e.ctrlKey)
+        if(!ctrlPressed){
+            resetDots()
+        }
+
         convertDots(startLoc, finalLoc)
-    } 
-    drawDots(dots)
+        drawDots(dots)
+    }
+
     //reset everything
-    ctrlPressed = drawing = false;
-    startLoc = currLoc = finalLoc = {}
+    ctrlPressed = false;
+    drawing = false;
+    startLoc = {}
+    currLoc = {}
+    finalLoc = {}
     maxDist = 0
 }
