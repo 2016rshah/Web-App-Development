@@ -121,3 +121,10 @@ c.onmouseup = function(e){
     finalLoc = {}
     maxDist = 0
 }
+document.onkeydown = function(e){
+    if(e.keyCode == 27){ //escape
+        clearC()
+        resetDots()
+        drawDots(dots)
+    }
+}
