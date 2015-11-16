@@ -1,8 +1,12 @@
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
+var RADIUS = 20;
+
 var dots = []
-dots.push({x:-50, y:-50, r:20, c:"red"}) //fix mystery bug when dragging without drawing dot
+dots.push({x:-50, y:-50, r:RADIUS, c:"red"}) //fix mystery bug when dragging without drawing dot
+
+var KEY_MAP = {37:"left", 38:"up", 39:"right", 40:"down"}
 
 document.getElementById("clear").onclick = clearC
 
@@ -10,11 +14,11 @@ function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function drawDots(arr){
-    for(var i = 0; i<arr.length; i++){
-        ctx.fillStyle = arr[i].c
+function drawDots(){
+    for(var i = 0; i<dots.length; i++){
+        ctx.fillStyle = dots[i].c
         ctx.beginPath();
-        ctx.arc(arr[i].x, arr[i].y, arr[i].r, 0,2*Math.PI)
+        ctx.arc(dots[i].x, dots[i].y, dots[i].r, 0,2*Math.PI)
         ctx.fill()
     }
 }
@@ -49,10 +53,38 @@ function resetDots(){
         dots[i].c = "blue"
     }
 }
+function moveDots(direction){
+    var m = 5; //magnitude of shift
+    for(var i = 0; i<dots.length; i++){
+        if(dots[i].c == "red"){
+            if(direction == "left")
+                dots[i].x -= m
+            else if(direction == "right")
+                dots[i].x += m
+            else if(direction == "up")
+                dots[i].y -= m
+            else if(direction == "down")
+                dots[i].y += m
+        }
+    }
+}
+function findSelectedDot(loc){
+    for(var i = 0; i<dots.length; i++){
+        if(loc.x > dots[i].x - RADIUS && loc.x < dots[i].x + RADIUS){ //within x threshold
+            if(loc.y > dots[i].y - RADIUS && loc.y < dots[i].y + RADIUS){ //within y threshold
+                resetDots()
+                dots[i].c = "red"
+                return dots[i]
+            }
+        }
+    }
+    return false
+}
 
 var startLoc = {}
 var currLoc = {}
 var finalLoc = {}
+var selectedDot = false
 
 var drawing = false;
 
@@ -63,7 +95,11 @@ var maxDist = 0
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
+
+    
     drawing = true;
+
+    selectedDot = findSelectedDot(startLoc)
 
     if(e.metaKey || e.ctrlKey){
         ctrlPressed = true;
@@ -71,7 +107,15 @@ c.onmousedown = function(e){
 
 }
 c.onmousemove = function(e){
-    if(drawing){
+    if(selectedDot){
+        clearC()
+        var coords = canvas.relMouseCoords(e);
+        currLoc = {x:coords.x, y:coords.y}
+        selectedDot.x = currLoc.x
+        selectedDot.y = currLoc.y
+        drawDots()
+    }
+    else if(drawing){
         clearC()
 
         var coords = canvas.relMouseCoords(e);
@@ -79,7 +123,7 @@ c.onmousemove = function(e){
 
         drawTwoPointRect(startLoc, currLoc)
 
-        drawDots(dots)
+        drawDots()
 
         var dist = Math.pow(startLoc.x - currLoc.x, 2) + Math.pow(startLoc.y - currLoc.y, 2)
         maxDist = (dist>maxDist) ? dist : maxDist
@@ -88,30 +132,39 @@ c.onmousemove = function(e){
 c.onmouseup = function(e){
     var coords = canvas.relMouseCoords(e);
     finalLoc = {x:coords.x, y:coords.y}
-
-    if(maxDist < 75){ //just clicked
+    
+    if(selectedDot){
         clearC()
-
-        if(!ctrlPressed){
-            resetDots()
-        }
-
-        dots.push({x:coords.x, y:coords.y, r:20, c:"red"}) 
-
-        drawDots(dots)
+        selectedDot.x = finalLoc.x
+        selectedDot.y = finalLoc.y
+        drawDots()
     }
-    else{ //dragged over
-        clearC()
+    else{
+        if(maxDist < 75){ //just clicked
+            clearC()
 
-        //control key part of lab
-        console.log(e.metaKey, e.ctrlKey)
-        if(!ctrlPressed){
-            resetDots()
+            if(!ctrlPressed){
+                resetDots()
+            }
+
+            dots.push({x:coords.x, y:coords.y, r:RADIUS, c:"red"}) 
+
+            drawDots()
         }
+        else{ //dragged over
+            clearC()
 
-        convertDots(startLoc, finalLoc)
-        drawDots(dots)
+            //control key part of lab
+            if(!ctrlPressed){
+                resetDots()
+            }
+
+            convertDots(startLoc, finalLoc)
+            drawDots()
+        }
     }
+
+
 
     //reset everything
     ctrlPressed = false;
@@ -119,12 +172,18 @@ c.onmouseup = function(e){
     startLoc = {}
     currLoc = {}
     finalLoc = {}
+    selectedDot = false
     maxDist = 0
 }
 document.onkeydown = function(e){
     if(e.keyCode == 27){ //escape
         clearC()
         resetDots()
-        drawDots(dots)
+        drawDots()
+    }
+    else if(KEY_MAP[e.keyCode]){
+        clearC()
+        moveDots(KEY_MAP[e.keyCode])
+        drawDots()
     }
 }
