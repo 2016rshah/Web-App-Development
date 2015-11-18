@@ -8,11 +8,13 @@ dots.push({x:-50, y:-50, r:RADIUS, c:"red"}) //fix mystery bug when dragging wit
 
 var KEY_MAP = {37:"left", 38:"up", 39:"right", 40:"down"}
 
-document.getElementById("clear").onclick = clearC
+document.getElementById("clear").onclick = function(){
+    clearC
+    dots = []
+}
 
 function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    dots = []
 }
 
 function drawDots(){
