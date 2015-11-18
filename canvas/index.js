@@ -12,6 +12,7 @@ document.getElementById("clear").onclick = clearC
 
 function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    dots = []
 }
 
 function drawDots(){
