@@ -56,8 +56,11 @@ function resetDots(){
         dots[i].c = "blue"
     }
 }
-function moveDots(direction){
-    var m = 5; //magnitude of shift
+function moveDots(direction, magnitude){
+    var m = 5;
+    if(magnitude){
+        m = magnitude
+    }
     for(var i = 0; i<dots.length; i++){
         if(dots[i].c == "red"){
             if(direction == "left")
@@ -71,11 +74,26 @@ function moveDots(direction){
         }
     }
 }
+
+function moveSelected(dx, dy){
+
+    for(var i = 0; i<dots.length; i++){
+        if(dots[i].c == "red"){
+            dots[i].x += dx
+            dots[i].y += dy
+        }
+    }
+
+}
+
 function findSelectedDot(loc){
     for(var i = 0; i<dots.length; i++){
         if(loc.x > dots[i].x - RADIUS && loc.x < dots[i].x + RADIUS){ //within x threshold
             if(loc.y > dots[i].y - RADIUS && loc.y < dots[i].y + RADIUS){ //within y threshold
-                resetDots()
+                // resetDots()
+                if(dots[i].c == "blue"){
+                    resetDots()
+                }
                 dots[i].c = "red"
                 return dots[i]
             }
@@ -95,6 +113,9 @@ var ctrlPressed = false;
 
 var maxDist = 0
 
+
+//toggle ability
+
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
     startLoc = {x:coords.x, y:coords.y}
@@ -110,15 +131,21 @@ c.onmousedown = function(e){
 
 }
 c.onmousemove = function(e){
-    if(selectedDot){
+    if(selectedDot){ //dragging a dot
         clearC()
         var coords = canvas.relMouseCoords(e);
+
+        if(currLoc.x && currLoc.y){
+            var dx = coords.x - currLoc.x
+            var dy = coords.y - currLoc.y
+            moveSelected(dx, dy)
+        }
+
         currLoc = {x:coords.x, y:coords.y}
-        selectedDot.x = currLoc.x
-        selectedDot.y = currLoc.y
+
         drawDots()
     }
-    else if(drawing){
+    else if(drawing){ //selecting dots
         clearC()
 
         var coords = canvas.relMouseCoords(e);
