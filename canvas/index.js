@@ -19,7 +19,13 @@ function clearC(){
 
 function drawDots(){
     for(var i = 0; i<dots.length; i++){
-        ctx.fillStyle = dots[i].c
+        if(dots[i].c == "blue"){
+            ctx.fillStyle = "#3d97ca"
+        }
+        else{
+            ctx.fillStyle = "#c20030"
+        }
+        // ctx.fillStyle = dots[i].c
         ctx.beginPath();
         ctx.arc(dots[i].x, dots[i].y, dots[i].r, 0,2*Math.PI)
         ctx.fill()
