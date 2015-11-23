@@ -62,11 +62,8 @@ function resetDots(){
         dots[i].c = "blue"
     }
 }
-function moveDots(direction, magnitude){
-    var m = 5;
-    if(magnitude){
-        m = magnitude
-    }
+function moveDots(direction){
+    var m = 1;
     for(var i = 0; i<dots.length; i++){
         if(dots[i].c == "red"){
             if(direction == "left")
@@ -96,10 +93,22 @@ function findSelectedDot(loc){
     for(var i = 0; i<dots.length; i++){
         if(loc.x > dots[i].x - RADIUS && loc.x < dots[i].x + RADIUS){ //within x threshold
             if(loc.y > dots[i].y - RADIUS && loc.y < dots[i].y + RADIUS){ //within y threshold
-                // resetDots()
-                if(dots[i].c == "blue"){
+                // if(ctrlPressed){
+                //     resetDots()
+                // }
+                // console.log(ctrlPressed)
+                if(!ctrlPressed && dots[i].c == "blue"){
                     resetDots()
+                } //these two if statements don't work together
+
+
+                if(dots[i].c == "blue"){
+                    originallyBlue = true
                 }
+                else{
+                    originallyBlue = false
+                }
+
                 dots[i].c = "red"
                 return dots[i]
             }
@@ -119,8 +128,10 @@ var ctrlPressed = false;
 
 var maxDist = 0
 
+var originallyBlue = true
 
-//toggle ability
+
+//toggle ability with control click
 
 c.onmousedown = function(e){
     var coords = canvas.relMouseCoords(e);
@@ -129,17 +140,24 @@ c.onmousedown = function(e){
     
     drawing = true;
 
-    selectedDot = findSelectedDot(startLoc)
-
     if(e.metaKey || e.ctrlKey){
         ctrlPressed = true;
     }
 
+    selectedDot = findSelectedDot(startLoc)
+
+    
+
 }
 c.onmousemove = function(e){
+
+    clearC()
+    var coords = canvas.relMouseCoords(e);
+
+    var dist = Math.pow(startLoc.x - currLoc.x, 2) + Math.pow(startLoc.y - currLoc.y, 2)
+    maxDist = (dist>maxDist) ? dist : maxDist
+
     if(selectedDot){ //dragging a dot
-        clearC()
-        var coords = canvas.relMouseCoords(e);
 
         if(currLoc.x && currLoc.y){
             var dx = coords.x - currLoc.x
@@ -148,22 +166,17 @@ c.onmousemove = function(e){
         }
 
         currLoc = {x:coords.x, y:coords.y}
-
-        drawDots()
     }
-    else if(drawing){ //selecting dots
-        clearC()
+    else if(drawing){ //selecting dots\
 
-        var coords = canvas.relMouseCoords(e);
         currLoc = {x:coords.x, y:coords.y}
 
         drawTwoPointRect(startLoc, currLoc)
 
-        drawDots()
-
-        var dist = Math.pow(startLoc.x - currLoc.x, 2) + Math.pow(startLoc.y - currLoc.y, 2)
-        maxDist = (dist>maxDist) ? dist : maxDist
+        
     }
+
+    drawDots()
 }
 c.onmouseup = function(e){
     var coords = canvas.relMouseCoords(e);
@@ -171,8 +184,14 @@ c.onmouseup = function(e){
     
     if(selectedDot){
         clearC()
-        selectedDot.x = finalLoc.x
-        selectedDot.y = finalLoc.y
+
+        if(maxDist < 75){
+            if(ctrlPressed){
+                selectedDot.c = (originallyBlue) ? "red" : "blue"
+            }
+        }
+
+
         drawDots()
     }
     else{
@@ -210,6 +229,7 @@ c.onmouseup = function(e){
     finalLoc = {}
     selectedDot = false
     maxDist = 0
+    originallyBlue = true;
 }
 document.onkeydown = function(e){
     if(e.keyCode == 27){ //escape
