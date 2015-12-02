@@ -6,7 +6,6 @@
 		<style>
 			body{
 				text-align:center;
-				/*background-color:#DCC6E0;*/
 			}
 			.column1{
 				background-color:#C8F7C5;
@@ -45,7 +44,7 @@
 						<p><b>Name:</b> <?php echo $_REQUEST["namef"], " ", $_REQUEST["namem"], " ", $_REQUEST["namel"]; ?></p>
 						<p><b>Phone:</b> <?php echo $_REQUEST["phone"]; ?></p>
 						<p><b>Birthdate:</b> <?php echo $_REQUEST["birthday"]; ?></p>
-						<p><b>Favorite Food:</b> <?php echo $_POST["food"]; ?></p>
+						<p><b>Favorite Food:</b> <?php echo $_REQUEST["food"]; ?></p>
 						<p><b>Time:</b> <?php echo date('Y-m-d H:i:s'); ?></p>
 					</div>
 				</div>
