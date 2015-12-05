@@ -8,6 +8,9 @@ dots.push({x:-50, y:-50, r:RADIUS, c:"red"}) //fix mystery bug when dragging wit
 
 var KEY_MAP = {37:"left", 38:"up", 39:"right", 40:"down"}
 
+// var pastActions = [{type:"create", x: 10, y: 10}, {type:"move", dots:[], dx: 10, dy: 10}]
+var pastActions = []
+
 document.getElementById("clear").onclick = function(){
     clearC()
     dots = []
@@ -163,6 +166,8 @@ c.onmousemove = function(e){
             var dx = coords.x - currLoc.x
             var dy = coords.y - currLoc.y
             moveSelected(dx, dy)
+            
+            
         }
 
         currLoc = {x:coords.x, y:coords.y}
@@ -191,6 +196,14 @@ c.onmouseup = function(e){
             }
         }
 
+        var selected = []
+        for(var i = 0; i<dots.length; i++){
+            if(dots[i].c == "red"){ selected.push(dots[i]) }
+        }
+        var dx = finalLoc.x - startLoc.x
+        var dy = finalLoc.y - startLoc.y
+        pastActions.push({"type":"move", "dots":selected, "dx": dx, "dy": dy})
+        console.log(pastActions)
 
         drawDots()
     }
@@ -203,6 +216,9 @@ c.onmouseup = function(e){
             }
 
             dots.push({x:coords.x, y:coords.y, r:RADIUS, c:"red"}) 
+
+            pastActions.push({type:"create", x: coords.x, y: coords.y})
+            console.log(pastActions)
 
             drawDots()
         }
@@ -239,7 +255,37 @@ document.onkeydown = function(e){
     }
     else if(KEY_MAP[e.keyCode]){
         clearC()
-        moveDots(KEY_MAP[e.keyCode])
+        // moveDots(KEY_MAP[e.keyCode])
+
+        var dx = 0
+        var dy = 0
+        direction = KEY_MAP[e.keyCode]
+        if(direction == "left")
+            dx = -1
+        else if(direction == "right")
+            dx = 1
+        else if(direction == "up")
+            dy = -1
+        else if(direction == "down")
+            dy = 1
+
+        moveSelected(dx, dy)
+
+        var selected = []
+        for(var i = 0; i<dots.length; i++){
+            if(dots[i].c == "red"){ selected.push(dots[i]) }
+        }
+        pastActions.push({"type":"move", "dots":selected, "dx": dx, "dy": dy})
+        console.log(pastActions)
+
         drawDots()
     }
 }
+
+// function undo(){
+//     if(type is create)
+//         delete that index from the dots array
+//     if type is move
+//         move to negative dx and negative dy
+
+// }
