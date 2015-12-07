@@ -14,6 +14,7 @@ var pastActions = []
 document.getElementById("clear").onclick = function(){
     clearC()
     dots = []
+    history = []
 }
 
 document.getElementById("undo").onclick = function(){
@@ -26,10 +27,26 @@ document.getElementById("undo").onclick = function(){
         console.log(dots)
     }
     else if(lastAction.type == "move"){
-        unmoveSpecific(lastAction.dots, lastAction.dx, lastAction.dy)
+        moveSpecific(lastAction.dots, -lastAction.dx, -lastAction.dy)
     }
 
     drawDots()
+}
+
+document.getElementById("replay").onclick = function(){
+    clearC()
+    dots = []
+    for(var i = 0; i<pastActions.length; i++){
+        if(pastActions[i].type == "create"){
+            resetDots()
+            dots.push({x:pastActions[i].x, y:pastActions[i].y, r:RADIUS, c:"red"})
+        }
+        else if(pastActions[i].type == "move"){
+            moveSpecific(pastActions[i].dots, pastActions[i].dx, pastActions[i].dy)
+        }
+        drawDots()
+        alert("move on?")
+    }
 }
 
 function clearC(){
@@ -107,11 +124,11 @@ function moveSelected(dx, dy){
     }
 }
 
-function unmoveSpecific(arr, dx, dy){
+function moveSpecific(arr, dx, dy){
     for(var i = 0; i<arr.length; i++){
         if(arr[i].c == "red"){
-            arr[i].x -= dx
-            arr[i].y -= dy
+            arr[i].x += dx
+            arr[i].y += dy
         }
     }
 
