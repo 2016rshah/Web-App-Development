@@ -16,6 +16,22 @@ document.getElementById("clear").onclick = function(){
     dots = []
 }
 
+document.getElementById("undo").onclick = function(){
+    clearC()
+
+    var lastAction = pastActions.pop()
+    if(lastAction.type == "create"){
+        console.log(dots)
+        dots.pop()
+        console.log(dots)
+    }
+    else if(lastAction.type == "move"){
+        unmoveSpecific(lastAction.dots, lastAction.dx, lastAction.dy)
+    }
+
+    drawDots()
+}
+
 function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -87,6 +103,15 @@ function moveSelected(dx, dy){
         if(dots[i].c == "red"){
             dots[i].x += dx
             dots[i].y += dy
+        }
+    }
+}
+
+function unmoveSpecific(arr, dx, dy){
+    for(var i = 0; i<arr.length; i++){
+        if(arr[i].c == "red"){
+            arr[i].x -= dx
+            arr[i].y -= dy
         }
     }
 
