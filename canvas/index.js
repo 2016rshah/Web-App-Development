@@ -329,19 +329,21 @@ document.onkeydown = function(e){
         else{
             clearC()
             for(var i = 0; i<dots.length; i++){
-                dots[i].r--;
+                if(dots[i].c == "red")
+                    dots[i].r--;
             }
             drawDots()
         }
     }
-    else if(e.keyCode == 107 || (e.keyCode == 187 && e.shiftKey)){ //plus pressed
+    else if(e.keyCode == 187 && e.shiftKey){ //plus pressed
         if(e.altKey){
             RADIUS++;
         }
         else{
             clearC()
             for(var i = 0; i<dots.length; i++){
-                dots[i].r++;
+                if(dots[i].c == "red")
+                    dots[i].r++;
             }
             drawDots()
         }
