@@ -322,6 +322,31 @@ document.onkeydown = function(e){
 
         drawDots()
     }
+    else if(e.keyCode == 189){ //minus pressed
+        if(e.altKey){
+            RADIUS--;
+        }
+        else{
+            clearC()
+            for(var i = 0; i<dots.length; i++){
+                dots[i].r--;
+            }
+            drawDots()
+        }
+    }
+    else if(e.keyCode == 107 || (e.keyCode == 187 && e.shiftKey)){ //plus pressed
+        if(e.altKey){
+            RADIUS++;
+        }
+        else{
+            clearC()
+            for(var i = 0; i<dots.length; i++){
+                dots[i].r++;
+            }
+            drawDots()
+        }
+    }
+    console.log(e);
 }
 
 // function undo(){
