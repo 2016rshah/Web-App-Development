@@ -8,46 +8,8 @@ dots.push({x:-50, y:-50, r:RADIUS, c:"red"}) //fix mystery bug when dragging wit
 
 var KEY_MAP = {37:"left", 38:"up", 39:"right", 40:"down"}
 
-// var pastActions = [{type:"create", x: 10, y: 10}, {type:"move", dots:[], dx: 10, dy: 10}]
+// var pastActions = [{type:"create", x: 10, y: 10}, {type:"move", dotIndices:[], dx: 10, dy: 10}]
 var pastActions = []
-
-document.getElementById("clear").onclick = function(){
-    clearC()
-    dots = []
-    history = []
-}
-
-document.getElementById("undo").onclick = function(){
-    clearC()
-
-    var lastAction = pastActions.pop()
-    if(lastAction.type == "create"){
-        console.log(dots)
-        dots.pop()
-        console.log(dots)
-    }
-    else if(lastAction.type == "move"){
-        moveSpecific(lastAction.dots, -lastAction.dx, -lastAction.dy)
-    }
-
-    drawDots()
-}
-
-document.getElementById("replay").onclick = function(){
-    clearC()
-    dots = []
-    for(var i = 0; i<pastActions.length; i++){
-        if(pastActions[i].type == "create"){
-            resetDots()
-            dots.push({x:pastActions[i].x, y:pastActions[i].y, r:RADIUS, c:"red"})
-        }
-        else if(pastActions[i].type == "move"){
-            moveSpecific(pastActions[i].dots, pastActions[i].dx, pastActions[i].dy)
-        }
-        drawDots()
-        alert("move on?")
-    }
-}
 
 function clearC(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -126,10 +88,8 @@ function moveSelected(dx, dy){
 
 function moveSpecific(arr, dx, dy){
     for(var i = 0; i<arr.length; i++){
-        if(arr[i].c == "red"){
-            arr[i].x += dx
-            arr[i].y += dy
-        }
+        dots[arr[i]].x += dx
+        dots[arr[i]].y += dy
     }
 
 }
@@ -161,6 +121,27 @@ function findSelectedDot(loc){
     }
     return false
 }
+
+function redoMove(mI){
+    clearC()
+    if(pastActions[mI].type == "create"){
+        resetDots()
+        dots.push({x:pastActions[mI].x, y:pastActions[mI].y, r:RADIUS, c:"red"})
+    }
+    else if(pastActions[mI].type == "move"){
+        
+        moveSpecific(pastActions[mI].dotIndices, pastActions[mI].dx, pastActions[mI].dy)
+    }
+    drawDots()
+
+    if(mI+1 < pastActions.length){
+        window.setTimeout(function(){
+            redoMove(mI+1)
+            console.log("recursing", mI)
+        }, 1000)
+    }
+}
+
 
 var startLoc = {}
 var currLoc = {}
@@ -240,11 +221,11 @@ c.onmouseup = function(e){
 
         var selected = []
         for(var i = 0; i<dots.length; i++){
-            if(dots[i].c == "red"){ selected.push(dots[i]) }
+            if(dots[i].c == "red"){ selected.push(i) }
         }
         var dx = finalLoc.x - startLoc.x
         var dy = finalLoc.y - startLoc.y
-        pastActions.push({"type":"move", "dots":selected, "dx": dx, "dy": dy})
+        pastActions.push({"type":"move", "dotIndices":selected, "dx": dx, "dy": dy})
         console.log(pastActions)
 
         drawDots()
@@ -276,9 +257,6 @@ c.onmouseup = function(e){
             drawDots()
         }
     }
-
-
-
     //reset everything
     ctrlPressed = false;
     drawing = false;
@@ -289,72 +267,3 @@ c.onmouseup = function(e){
     maxDist = 0
     originallyBlue = true;
 }
-document.onkeydown = function(e){
-    if(e.keyCode == 27){ //escape
-        clearC()
-        resetDots()
-        drawDots()
-    }
-    else if(KEY_MAP[e.keyCode]){
-        clearC()
-        // moveDots(KEY_MAP[e.keyCode])
-
-        var dx = 0
-        var dy = 0
-        direction = KEY_MAP[e.keyCode]
-        if(direction == "left")
-            dx = -1
-        else if(direction == "right")
-            dx = 1
-        else if(direction == "up")
-            dy = -1
-        else if(direction == "down")
-            dy = 1
-
-        moveSelected(dx, dy)
-
-        var selected = []
-        for(var i = 0; i<dots.length; i++){
-            if(dots[i].c == "red"){ selected.push(dots[i]) }
-        }
-        pastActions.push({"type":"move", "dots":selected, "dx": dx, "dy": dy})
-        console.log(pastActions)
-
-        drawDots()
-    }
-    else if(e.keyCode == 189){ //minus pressed
-        if(e.altKey){
-            RADIUS--;
-        }
-        else{
-            clearC()
-            for(var i = 0; i<dots.length; i++){
-                if(dots[i].c == "red")
-                    dots[i].r--;
-            }
-            drawDots()
-        }
-    }
-    else if(e.keyCode == 187 && e.shiftKey){ //plus pressed
-        if(e.altKey){
-            RADIUS++;
-        }
-        else{
-            clearC()
-            for(var i = 0; i<dots.length; i++){
-                if(dots[i].c == "red")
-                    dots[i].r++;
-            }
-            drawDots()
-        }
-    }
-    console.log(e);
-}
-
-// function undo(){
-//     if(type is create)
-//         delete that index from the dots array
-//     if type is move
-//         move to negative dx and negative dy
-
-// }
